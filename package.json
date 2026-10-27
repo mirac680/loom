@@ -1,0 +1,14 @@
+{
+  "name": "loom-local-notes",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "description": "A local-first notebook with a visual, linked knowledge map.",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

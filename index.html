@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f3ee">
+    <meta name="description" content="A calm, local-first notebook that turns your notes into a living knowledge graph.">
+    <title>Loom — thoughts, connected</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Notebook navigation">
+        <div class="brand-row">
+          <a class="brand" href="#" aria-label="Loom home">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>loom<span class="brand-period">.</span></span>
+          </a>
+          <button class="icon-button sidebar-collapse" id="sidebar-toggle" aria-label="Toggle sidebar" title="Toggle sidebar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+          </button>
+        </div>
+
+        <button class="new-note-button" id="new-note-button">
+          <span class="plus-icon" aria-hidden="true">+</span>
+          <span data-i18n="newNote">New note</span>
+          <kbd>⌘ N</kbd>
+        </button>
+
+        <label class="search-box" for="search-input">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+          <input id="search-input" type="search" placeholder="Search notes..." autocomplete="off" data-i18n-placeholder="searchPlaceholder">
+          <kbd>⌘ K</kbd>
+        </label>
+
+        <div class="section-label"><span data-i18n="workspace">WORKSPACE</span></div>
+        <nav class="primary-nav" aria-label="Views">
+          <button class="nav-item active" id="all-notes-button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h14a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V6A1.5 1.5 0 0 1 5 4.5Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+            <span data-i18n="allNotes">All notes</span><span class="nav-count" id="note-count">0</span>
+          </button>
+          <button class="nav-item" id="pinned-button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5-4 1-4 4-1 5-2-2-6 5 5-6-2-2 5-1 4-4z"/></svg>
+            <span data-i18n="pinned">Pinned</span>
+          </button>
+          <button class="nav-item" id="graph-button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="m8 6.2 7.8.6M7.2 8l3.7 8M16.8 9l-3.6 7"/></svg>
+            <span data-i18n="knowledgeMap">Knowledge map</span><span class="nav-arrow">↗</span>
+          </button>
+        </nav>
+
+        <div class="section-label tags-heading"><span data-i18n="yourTags">YOUR TAGS</span><button id="clear-tag" class="text-button hidden" data-i18n="clear">Clear</button></div>
+        <div class="tag-list" id="tag-list"></div>
+
+        <div class="section-label recent-heading"><span data-i18n="recentNotes">RECENT NOTES</span><span class="recent-sort" aria-hidden="true">↕</span></div>
+        <div class="note-list" id="note-list" aria-label="Recent notes"></div>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="sidebar-note-card">
+          <div class="card-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+          <p class="card-eyebrow" data-i18n="smallThoughts">SMALL THOUGHTS, BIG PICTURE</p>
+          <p class="card-copy" data-i18n="cardCopy">Link notes with <code>[[double brackets]]</code> and watch your ideas find each other.</p>
+          <button class="card-link" id="card-graph"><span data-i18n="exploreMap">Explore your map</span><span aria-hidden="true">↗</span></button>
+        </div>
+
+        <div class="profile-row">
+          <div class="avatar">L</div>
+          <div class="profile-copy"><strong data-i18n="yourNotebook">Your notebook</strong><span data-i18n="savedOnDevice">Saved on this device</span></div>
+          <button class="icon-button more-button" id="more-button" aria-label="More options" title="More options">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+          </button>
+          <div class="more-menu hidden" id="more-menu" role="menu">
+            <button id="export-button" role="menuitem" data-i18n="exportData">Export notebook</button>
+            <button id="import-button" role="menuitem" data-i18n="importData">Import notebook</button>
+            <button id="theme-button" role="menuitem" data-i18n="toggleTheme">Toggle dark mode</button>
+            <button id="language-button" role="menuitem">Türkçe / English</button>
+          </div>
+          <input id="import-file" type="file" accept="application/json,.json" hidden>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <button class="icon-button mobile-menu-button" id="mobile-menu-button" aria-label="Open notebook navigation" title="Open notebook navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg></button>
+          <div class="breadcrumbs"><span data-i18n="workspace">WORKSPACE</span><span class="crumb-slash">/</span><strong id="breadcrumb-current" data-i18n="allNotes">All notes</strong></div>
+          <div class="top-actions">
+            <div class="save-indicator"><span class="save-dot"></span><span id="save-status" data-i18n="allChangesSaved">All changes saved</span></div>
+            <button class="outline-button graph-open-button" id="top-graph-button"><span class="graph-mini-icon">✳</span><span data-i18n="openMap">Open map</span></button>
+            <button class="icon-button top-more" id="top-export-button" aria-label="Export notebook" title="Export notebook">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 16v4h14v-4"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="editor-layout" id="editor-layout">
+          <div class="editor-column">
+            <div class="empty-state hidden" id="empty-state">
+              <div class="empty-illustration" aria-hidden="true"><span class="empty-sun"></span><span class="empty-line line-one"></span><span class="empty-line line-two"></span><span class="empty-node node-one"></span><span class="empty-node node-two"></span><span class="empty-node node-three"></span></div>
+              <p class="empty-kicker" data-i18n="quietCorner">A QUIET CORNER FOR YOUR IDEAS</p>
+              <h1 id="empty-title" data-i18n="nothingHere">Nothing here yet.</h1>
+              <p class="empty-description" id="empty-description" data-i18n="emptyDescription">Start with a small thought. Your notes will grow into a map of what matters to you.</p>
+              <button class="new-note-button empty-create" id="empty-create"><span class="plus-icon">+</span><span data-i18n="createFirstNote">Create your first note</span></button>
+            </div>
+
+            <article class="note-editor" id="note-editor">
+              <div class="note-meta-row">
+                <div class="note-date"><span class="date-sparkle">✳</span><span id="note-date"></span><span class="meta-separator">·</span><span id="reading-time">1 min read</span></div>
+                <div class="note-actions">
+                  <button class="icon-button pin-action" id="pin-note-button" aria-label="Pin note" title="Pin note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5-4 1-4 4-1 5-2-2-6 5 5-6-2-2 5-1 4-4z"/></svg></button>
+                  <button class="icon-button" id="delete-note-button" aria-label="Delete note" title="Delete note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+                </div>
+              </div>
+              <input class="title-input" id="title-input" type="text" placeholder="Untitled note" aria-label="Note title" data-i18n-placeholder="untitled">
+              <div class="tag-input-row"><span class="tag-hash">#</span><input id="tags-input" type="text" placeholder="Add tags, separated by commas" aria-label="Note tags" data-i18n-placeholder="tagPlaceholder"></div>
+              <div class="editor-toolbar">
+                <div class="mode-tabs" role="tablist" aria-label="Editor mode">
+                  <button class="mode-tab active" id="write-tab" role="tab" aria-selected="true" data-i18n="write">Write</button>
+                  <button class="mode-tab" id="preview-tab" role="tab" aria-selected="false" data-i18n="preview">Preview</button>
+                </div>
+                <div class="format-tools" aria-label="Formatting tools">
+                  <button class="format-button" data-format="bold" title="Bold (Ctrl+B)" aria-label="Bold"><strong>B</strong></button>
+                  <button class="format-button italic-format" data-format="italic" title="Italic (Ctrl+I)" aria-label="Italic">I</button>
+                  <button class="format-button" data-format="code" title="Inline code" aria-label="Inline code">&lt;/&gt;</button>
+                  <span class="toolbar-divider"></span>
+                  <button class="format-button link-format" data-format="wiki" title="Link a note" aria-label="Link a note">[[ ]]</button>
+                </div>
+              </div>
+              <textarea id="content-input" class="content-input" placeholder="Write something worth remembering… Use [[double brackets]] to connect ideas." spellcheck="true" data-i18n-placeholder="contentPlaceholder"></textarea>
+              <div class="markdown-preview hidden" id="markdown-preview" tabindex="0"></div>
+              <div class="editor-footer"><span><span class="markdown-badge">M↓</span> <span data-i18n="markdownSupported">Markdown supported</span></span><span id="word-count">0 words</span></div>
+              <div class="backlinks-section" id="backlinks-section">
+                <div class="backlinks-heading"><span class="backlink-glyph">↗</span><span data-i18n="linkedFrom">LINKED FROM</span><span class="backlink-count" id="backlink-count">0</span></div>
+                <div class="backlink-list" id="backlink-list"></div>
+              </div>
+            </article>
+          </div>
+          <aside class="right-rail" id="right-rail">
+            <div class="rail-heading"><span data-i18n="onThisPage">ON THIS PAGE</span><span class="rail-rule"></span></div>
+            <div class="outline-list" id="outline-list"><span class="outline-muted" data-i18n="addHeadings">Add headings to build an outline</span></div>
+            <div class="rail-card">
+              <div class="rail-card-top"><span class="rail-sparkle">✳</span><span data-i18n="aThoughtForYou">A THOUGHT FOR YOU</span></div>
+              <p data-i18n="thoughtPrompt">What idea has been quietly asking for your attention?</p>
+              <button id="prompt-button"><span data-i18n="writeAboutIt">Write about it</span><span>↗</span></button>
+            </div>
+            <div class="keyboard-hint"><span data-i18n="tip">TIP</span><p data-i18n="keyboardTip">Press <kbd>⌘</kbd> + <kbd>K</kbd> anytime to find a note.</p></div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <div class="graph-overlay hidden" id="graph-overlay" role="dialog" aria-modal="true" aria-labelledby="graph-title">
+      <div class="graph-backdrop"></div>
+      <section class="graph-window">
+        <header class="graph-header">
+          <div><div class="graph-kicker"><span class="graph-live-dot"></span><span data-i18n="yourIdeas">YOUR IDEAS, IN ORBIT</span></div><h2 id="graph-title" data-i18n="knowledgeMap">Knowledge map</h2></div>
+          <div class="graph-header-actions"><span class="graph-stat" id="graph-stat">0 notes · 0 links</span><button class="icon-button" id="graph-reset" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8m0-5v5h5"/></svg></button><button class="icon-button graph-close" id="graph-close" aria-label="Close map" title="Close map">×</button></div>
+        </header>
+        <div class="graph-canvas-wrap"><canvas id="graph-canvas" aria-label="Interactive map of your linked notes"></canvas><div class="graph-empty hidden" id="graph-empty"><span>✳</span><h3 data-i18n="mapNeedsNotes">Your map is waiting for a few thoughts.</h3><p data-i18n="mapNeedsNotesCopy">Create notes and connect them with [[double brackets]] to see them here.</p><button class="outline-button" id="graph-create-note"><span class="plus-icon">+</span><span data-i18n="createNote">Create a note</span></button></div><div class="graph-legend" id="graph-legend"><span><i class="legend-dot current-dot"></i><span data-i18n="currentNote">Current note</span></span><span><i class="legend-dot linked-dot"></i><span data-i18n="linkedNotes">Linked notes</span></span></div><div class="graph-controls"><span data-i18n="mapControls">Drag to pan · scroll to zoom · click a note to open</span></div></div>
+        <footer class="graph-footer"><span class="footer-mark"><span class="brand-mark small-mark"><i></i><i></i><i></i></span> loom</span><span data-i18n="mapFooter">Every connection starts with a thought.</span><button class="text-button" id="graph-export" data-i18n="exportData">Export notebook</button></footer>
+      </section>
+    </div>
+
+    <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "Loom — thoughts, connected",
+  "short_name": "Loom",
+  "description": "A calm, local-first notebook that turns your notes into a living knowledge graph.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f7f3",
+  "theme_color": "#f5f3ee",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
